@@ -1,0 +1,11 @@
+Text – „de_test_phone“
+
+Zur Aufnahme dieser Sprachnachricht wird eine iPhone 6s verwendet. 
+
+Die Sprachnachricht wird über das Microphone der iphone Kopfhörer aufgenommen. 
+
+Die Entfernung zum Microphone beträgt ca. 5 cm.
+
+Testsatz 1: Die Maschine funktioniert fehlerfrei.
+
+Testsatz 2: Es ist ein Problem aufgetreten, brauche einen Elektriker an Maschine 2.  
