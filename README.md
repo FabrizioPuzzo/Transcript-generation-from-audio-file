@@ -49,7 +49,8 @@ All python packages needed to run the code are included in the 'requirements.txt
 
 1. Set parameters in <code>main_demo.py</code> (line 5 to 7).
 
-2. Set location for your [Google credentials](https://cloud.google.com/docs/authentication/getting-started) JSON-file in <code>main_demo.py</code> (line 11).
+2. Set location for your Google credentials JSON-file in <code>main_demo.py</code> (line 11).
+    - How to get the Google credentials JSON-file: [click here](https://cloud.google.com/docs/authentication/getting-started)
 
 3. Copy the audio files (.mp3 or .wav) into the folder 'audio_raw/'.
 
