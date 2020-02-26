@@ -47,7 +47,7 @@ All python packages needed to run the code are included in the 'requirements.txt
 
 ### Run demo
 
-1. Set parameters in <code>tts_main_gh.py</code> (line 5 to 7).
+1. Set parameters in <code>main_demo.py</code> (line 5 to 7).
 
 2. Set location for your [Google credentials](https://cloud.google.com/docs/authentication/getting-started) JSON-file in <code>main_demo.py</code> (line 11).
 
