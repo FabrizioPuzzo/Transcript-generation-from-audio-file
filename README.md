@@ -4,27 +4,27 @@
 
 **Generating a transcript from an audio file with the Google Cloud Speech-to-Text API**
 
-In this Python project the [Google Cloud Speech-to-Text API](https://cloud.google.com/speech-to-text) is used to generate a transcript ffrom an audio file. 
+In this Python project the [Google Cloud Speech-to-Text API](https://cloud.google.com/speech-to-text) is used to generate a transcript from an audio file. 
 
 ---
 
 # Files inculded
 
-My project includes the following files:
+This project includes the following files:
 * <code>main_demo.py</code> - main script
-* <code>transcrip_generator.py</code> - class for transcript generation
+* <code>transcript_generator.py</code> - class for transcript generation
 
-The folder 'audio_raw/' contains audio files that can be used to test the code. See 'Usage - run demo')
+The folder 'audio_raw/' contains audio files that can be used to test the code. (See 'Usage - Run demo')
 
 # Requirements
 
 Python-Version: 3.7
 
-All python packages needed to run the code are included in the 'requirements.txt' file. Read the section 'Usage - run demo' on how to set up the python environment and on how to run the demo.
+All python packages needed to run the code are included in the 'requirements.txt' file. Read the section 'Usage - Run demo' on how to set up the python environment and on how to run the demo.
 
 # Usage
 
-## Setting up he python environment 
+### Setting up he python environment 
 
 1. Download this repository. 
 2. Create a virtual environment with Python 3.
@@ -45,7 +45,7 @@ All python packages needed to run the code are included in the 'requirements.txt
     pip3 install -r requirements.txt
     ```
 
-## Run demo
+### Run demo
 
 1. Set parameters in <code>tts_main_gh.py</code> (line 5 to 7).
 
