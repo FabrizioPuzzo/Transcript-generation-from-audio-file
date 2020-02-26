@@ -18,11 +18,12 @@ class TransscriptGenerator():
 	def __init__(self, language_code='de', max_len_snip_sec=50, 
 		audio_encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16):
 
-		self.language_code = language_code
-		self.max_len_snip = max_len_snip_sec
-		self.sample_rate_hertz = None
-		self.audio_encoding = audio_encoding
+		self.language_code = language_code		# languge code ("en", "de"), see: https://cloud.google.com/speech-to-text/docs	
+		self.max_len_snip = max_len_snip_sec	# length of audio snippets in sec - max 60 sec
+		self.sample_rate_hertz = None 			# sample rate of audio file in hertz
+		self.audio_encoding = audio_encoding	# Audio encoding 
 
+		# correct snippet length
 		if self.max_len_snip > 55:
 			print('max_len_snip_sec was set to ' + \
 				 str(max_len_snip_sec) + '- to big - max = 55 s \n' + \
@@ -54,38 +55,81 @@ class TransscriptGenerator():
 		return filename_new
 
 	def _convert_mp3_to_wav(self, path_audio):
+		"""
+		Converts .mp3 audio file to a .wav audio file. 
+		Returns path to converted auido file.
+
+		Args:
+		path_audio: path of audio file
+		"""
+
 		path_audio_wav = self._extend_filename(path_audio, '.wav', False) 
 		sound = AudioSegment.from_mp3(path_audio)
 		sound.export(path_audio_wav, format="wav")
 		return path_audio_wav
 
 	def _convert_to_mono(self, path_audio):
+		"""
+		Converts stereo .wav audio file to a mono .wav audio file. 
+		Returns path to converted auido file.
+
+		Args:
+		path_audio: path of audio file
+		"""
+
 		path_audio_mono = self._extend_filename(path_audio, 'mono', True)
 		sound = AudioSegment.from_wav(path_audio)
 		sound = sound.set_channels(1)
 		sound.export(path_audio_mono, format="wav")
 		return path_audio_mono
 
-	def _filter_audio_nr(self, path_audio):
-		#https://timsainburg.com/noise-reduction-python.html
-		path_audio_filt = self._extend_filename(path_audio, 'filt', True)
-		# load data
-		rate, data = scipy.io.wavfile.read(path_audio)
-		data = data / 32768
-		# perform noise reduction
-		data_reduced_noise = nr.reduce_noise(audio_clip=data, noise_clip=data, verbose=False)
-		# save flitered audio
-		scipy.io.wavfile.write(path_audio_filt, rate, data_reduced_noise)
-		return path_audio_filt
-
 	def _convert_to_16Bit(self, path_audio):
+		"""
+		Converts .wav audio file to a .wav audio file with 16 Bit bit-depth. 
+		Returns path to converted auido file.
+
+		Args:
+		path_audio: path of audio file
+		"""
+
 		path_audio_16Bit = self._extend_filename(path_audio, '16Bit', True)
 		data, rate = soundfile.read(path_audio)
 		soundfile.write(path_audio_16Bit, data, rate, subtype='PCM_16')
 		return path_audio_16Bit
 
+	def _filter_audio_nr(self, path_audio):
+		"""
+		Applies filter to given audio file. 
+		Returns path to filtered auido file.
+		Source code: https://timsainburg.com/noise-reduction-python.html
+
+		Args:
+		path_audio: path of audio file
+		"""
+
+		# Create path
+		path_audio_filt = self._extend_filename(path_audio, 'filt', True)
+
+		# load data
+		rate, data = scipy.io.wavfile.read(path_audio)
+		data = data / 32768
+
+		# perform noise reduction
+		data_reduced_noise = nr.reduce_noise(audio_clip=data, noise_clip=data, verbose=False)
+
+		# save flitered audio
+		scipy.io.wavfile.write(path_audio_filt, rate, data_reduced_noise)
+		return path_audio_filt
+
 	def _split_audio(self, path_audio):
-		
+		"""
+		Splits audio file into 50 sec snippets. 
+		Returns path to directory that contains the snippets.
+
+		Args:
+		path_audio: path of audio file
+		"""
+
 		# Create and empty folder
 		dirname = os.path.join(os.path.dirname(__file__), 'snippets/')
 		self._create_dir(dirname, True)
@@ -108,8 +152,11 @@ class TransscriptGenerator():
 				done = True
 				end_point = len(sound)
 
+			# Create filename
 			filename = os.path.join(os.path.dirname(__file__), \
 				'snippets/part_' + str(incr).zfill(5) + '.wav')
+
+			# Slice soundfile
 			snippet = sound[start_point: end_point]
 			snippet.export(filename, format="wav")
 
@@ -123,9 +170,8 @@ class TransscriptGenerator():
 		storage_uri URI for audio file in Cloud Storage, e.g. gs://[BUCKET]/[FILE]
 		"""
 
+		# Create client
 		client = speech_v1p1beta1.SpeechClient()
-
-		# storage_uri = 'gs://cloud-samples-data/speech/brooklyn_bridge.mp3'
 
 		# The language of the supplied audio
 		language_code = self.language_code
@@ -142,11 +188,15 @@ class TransscriptGenerator():
 			"encoding": encoding,
 			}
 		
+		# Read audio file
 		with io.open(path_audio, "rb") as f:
 			content = f.read()
 		audio = {"content": content}
 
+		# Process audio file
 		response = client.recognize(config, audio)
+
+		# Put together text string
 		text = ''
 		for result in response.results:
 			# First alternative is the most probable result
@@ -157,6 +207,15 @@ class TransscriptGenerator():
 		return text
 	
 	def _preprocess_audio(self, path_audio, apply_filter=False):
+		"""
+		Performs the following preprocessing steps: 'convert to .wav', 'convert from stereo to mono',
+		'apply filter', 'convert to 16 Bit bit-depth '. Returns path to preprocessed audio file.
+
+		Args:
+		path_audio: path of original (raw) audio file
+		apply_filter: bool to determine if a filter should be applied. 
+					  Note: The Google Cloud Speech-to-Text API applies a filter of it's own.
+		"""
 
 		# Convert to wav
 		if path_audio.endswith('.mp3'):
@@ -175,7 +234,21 @@ class TransscriptGenerator():
 
 		return path_audio
 
-	def generate_transscript(self, path_audio_orig, apply_filter=False):
+	def generate_transcript(self, path_audio_orig, apply_filter=False):
+		"""
+		Generates transcript from an audio file. The audio files is 
+		first preprocessed and splitt into 50 second snippets. The splitting 
+		is necessary because the implemented method of the 
+		Google Cloud Speech-to-Text API accepts only audio files with a 
+		maximum lenght up to 60 seconds. To implement the method to process longer audio files,
+		the audio files must be stored in a google cloud bucket. 
+		See: https://cloud.google.com/speech-to-text/docs/async-recognize
+
+		Args:
+		path_audio_orig: path of original (raw) audio file
+		apply_filter: bool to determine if a filter should be applied. 
+					  Note: The Google Cloud Speech-to-Text API applies a filter of it's own.
+		"""
 
 		# Create paths
 		dir_audio_prepro = os.path.join(os.path.dirname(__file__), 'audio_prepro/')
