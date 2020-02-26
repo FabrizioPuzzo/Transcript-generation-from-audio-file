@@ -54,7 +54,7 @@ All python packages needed to run the code are included in the 'requirements.txt
 
 3. Copy the audio files (.mp3 or .wav) into the folder 'audio_raw/'.
 
-4. Run <code>main_demo.py</code>. The generated transcripts are stored in the folder 'transcripts/'.
+4. Run <code>main_demo.py</code>. The generated transcripts are stored in the folder 'transcripts/' (folder will be created automatically).
 
 # References
 
