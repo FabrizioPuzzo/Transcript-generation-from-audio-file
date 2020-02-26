@@ -14,7 +14,7 @@ This project includes the following files:
 * <code>main_demo.py</code> - main script
 * <code>transcript_generator.py</code> - class for transcript generation
 
-The folder 'audio_raw/' contains audio files that can be used to test the code. (See 'Usage - Run demo')
+The folder 'audio_raw/' contains audio files that can be used to test the code (see 'Usage - Run demo'). This folder also contains the true transcripts of the provided audio files.
 
 # Requirements
 
