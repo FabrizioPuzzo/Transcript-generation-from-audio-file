@@ -13,7 +13,7 @@ from google.cloud import speech_v1p1beta1
 from google.cloud.speech_v1p1beta1 import enums
 
 
-class TransscriptGenerator():
+class TranscriptGenerator():
 
 	def __init__(self, language_code='de', max_len_snip_sec=50, 
 		audio_encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16):
